@@ -183,7 +183,6 @@ public class Robot extends TimedRobot {
     // and backward, and the X turns left and right.
     m_robotDrive.arcadeDrive(m_stick.getY(), m_stick.getX());
     //System.out.println(m_stick.getRawButton(1));
-    //test
   }
 
 }
