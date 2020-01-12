@@ -7,12 +7,15 @@
 
 package frc.robot;
 
+
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -37,30 +40,21 @@ import com.revrobotics.ColorMatch;
  */
 public class Robot extends TimedRobot {
 
-  boolean spinning = false;
+  RobotHardware robot = RobotHardware.getInstance();
+
+  boolean colorSpin = false;
   boolean searchColor = false;
-  boolean inverted = false;
+  boolean driveInverted = false;
+  boolean ballLauncher = false;
 
   int spinNumber = 0;
   
 
-  private final Spark m_leftMotor = new Spark(0);
-  private final Spark m_rightMotor = new Spark(1);
 
-  private final PWMTalonSRX spinnerMotor = new PWMTalonSRX(2);
-  private final PWMTalonSRX spinner2 = new PWMTalonSRX(3);
-
-  private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-  private final Joystick controller = new Joystick(1);
-  private final Joystick joystick = new Joystick(2);
 
   private NetworkTableInstance ntinst = NetworkTableInstance.getDefault();
   NetworkTable dsInfo = ntinst.getTable("dsInfo");
   public SendableChooser<Integer> colorChooser = new SendableChooser<Integer>();
-  
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
   private final ColorMatch m_colorMatcher = new ColorMatch();
 
@@ -106,7 +100,7 @@ public class Robot extends TimedRobot {
 
     //System.out.println(colorChooser.getSelected());
 
-    Color detectedColor = m_colorSensor.getColor();      
+    Color detectedColor = robot.colorSensor.getColor();      
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
     switch(colorChooser.getSelected()) {
@@ -133,9 +127,9 @@ public class Robot extends TimedRobot {
 
     }
 
-    dsInfo.getEntry("spinning").setValue(spinning);
+    dsInfo.getEntry("spinning").setValue(colorSpin);
     dsInfo.getEntry("searchColor").setValue(searchColor);
-    dsInfo.getEntry("Inverted").setValue(inverted);
+    dsInfo.getEntry("Inverted").setValue(driveInverted);
     dsInfo.getEntry("Spins Counted").setValue(spinNumber/8);
 
 
@@ -147,35 +141,41 @@ public class Robot extends TimedRobot {
 
 
 
-    Color detectedColor = m_colorSensor.getColor();      
+    Color detectedColor = robot.colorSensor.getColor();      
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
-    if (controller.getRawButtonPressed(1)) searchColor = !searchColor;
-    if (controller.getRawButtonPressed(10)) spinning = !spinning;
-    if (joystick.getRawButtonPressed(2)) inverted = !inverted;
+    if (robot.controller.getRawButtonPressed(1)) searchColor = !searchColor;
+    if (robot.controller.getRawButtonPressed(10)) colorSpin = !colorSpin;
+    if (robot.joystick.getRawButtonPressed(2)) driveInverted = !driveInverted;
+    if (robot.joystick.getRawButtonPressed(3)) ballLauncher = !ballLauncher;
 
     System.out.println(spinNumber);
     System.out.println("previous color = " + kPreviousColor);
     System.out.println("current color = " + match.color);
 
-    if (controller.getRawButton(3)) {
+    
+    if (ballLauncher) {
 
-      spinnerMotor.set(.4);
-      spinner2.set(-0.4);
+      robot.spinner2.set(1);
+      robot.spinner3.set(-1);
+
+    }else {
+
+      robot.spinner2.stopMotor();
+      robot.spinner3.stopMotor();
 
     }
-
-    /*
-    if (searchColor && !spinning) {
+    
+    if (searchColor && !colorSpin) {
       if(kSelectedTarget != match.color) {
-        spinnerMotor.set(0.3);
+        robot.spinnerMotor.set(0.3);
       }else {
-        spinnerMotor.stopMotor();
+        robot.spinnerMotor.stopMotor();
       }
-    } else if(spinning && !searchColor) {
+    } else if(colorSpin && !searchColor) {
       if (spinNumber/8 < spins.getDouble(3.0)) {
 
-        spinnerMotor.set(0.3);
+        robot.spinnerMotor.set(0.3);
 
         if (kPreviousColor != match.color) {
           spinNumber++;
@@ -183,28 +183,28 @@ public class Robot extends TimedRobot {
         }
       }
       else {
-        spinnerMotor.stopMotor();
-        spinning = false;
+        robot.spinnerMotor.stopMotor();
+        colorSpin = false;
         spinNumber = 0;
       }
-    } else if (spinning && searchColor) {
-      spinning = false;
+    } else if (colorSpin && searchColor) {
+      colorSpin = false;
       searchColor = false;
       
     } else {
-      spinnerMotor.stopMotor();
-    }*/
+      robot.spinnerMotor.stopMotor();
+    }
 
 
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
 
-    if (!inverted) {
-      m_robotDrive.arcadeDrive(joystick.getY() * -1 * 0.7, joystick.getZ()* 0.7);
+    if (!driveInverted) {
+      robot.drive.arcadeDrive(robot.joystick.getY() * -1 * 0.7, robot.joystick.getZ()* 0.7);
 
     }else {
-      m_robotDrive.arcadeDrive(joystick.getY() * 0.7, joystick.getZ() * 0.7);
+      robot.drive.arcadeDrive(robot.joystick.getY() * 0.7, robot.joystick.getZ() * 0.7);
     }
 
     
