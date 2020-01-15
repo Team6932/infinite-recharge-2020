@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -46,11 +47,6 @@ import com.revrobotics.ColorMatch;
 
 
 public class Robot extends TimedRobot {
-
-  
-
-
-
 
 //unknown....
   private ADIS16448_IMU.IMUAxis m_yawActiveAxis;
@@ -83,6 +79,8 @@ public class Robot extends TimedRobot {
   private static final String kYawYAxis = "Y-Axis";
   
   private String m_yawSelected;
+
+  private String m_autoSelected;
   
   //shuffleboard setup
   private NetworkTableInstance ntinst = NetworkTableInstance.getDefault();
@@ -113,6 +111,9 @@ public class Robot extends TimedRobot {
 
   @Override 
   public void robotInit() {
+
+    m_configCal = true;
+    
 
     //camera setup
     CameraServer.getInstance().startAutomaticCapture();
@@ -242,6 +243,7 @@ public class Robot extends TimedRobot {
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
     // sets the selected shuffleboard color to an actual color that can be checked.
+
     switch(colorChooser.getSelected()) {
       case 1: {
         kSelectedTarget = kBlueTarget;
@@ -272,8 +274,6 @@ public class Robot extends TimedRobot {
     dsInfo.getEntry("Inverted").setValue(driveInverted);
     dsInfo.getEntry("Spins Counted").setValue(spinNumber/8);
 
-
-    
   }
 
   //TODO Finish adding code
@@ -311,36 +311,40 @@ public class Robot extends TimedRobot {
     }
     
     //controls the color wheel motors and color sensor
-    if (searchColor && !colorSpin) {// if the color specific 
-      if(kSelectedTarget != match.color) {
-        robot.spinnerMotor.set(0.3);
-      }else {
-        robot.spinnerMotor.stopMotor();
-        colorSpin = false;
+    if (searchColor && !colorSpin) {// if the color specific wheel command is being run, and not the spin ammount command
+      if(kSelectedTarget != match.color) {// if the color seen is not equal to the color chosen by the user
+        robot.spinnerMotor.set(0.3);//spin the motor
+      }else {// if the colors are the same
+        robot.spinnerMotor.stopMotor();//stop the motor
+        colorSpin = false;//disable command
         //TODO spinn motor X amount to put sensor in right spot.
       }
-    } else if(colorSpin && !searchColor) {
-      if (spinNumber/8 < spins.getDouble(3.0)) {
+    } else if(colorSpin && !searchColor) {// if the spin ammount is run and not the color searcher
+      if (spinNumber/8 < spins.getDouble(3.0)) {// spin the wheel untill the number of complete spins is equal to the user specified number
+
+        if (spinNumber == 0) {
+          kPreviousColor = match.color;
+        }
 
         robot.spinnerMotor.set(0.3);
 
-        if (kPreviousColor != match.color) {
+        if (kPreviousColor != match.color) {// adds 1 to the spin number every time it sees a new color (this is divided by 8)
           spinNumber++;
-          kPreviousColor = match.color;
+          kPreviousColor = match.color;//sets the current color to the color to the previous color
         }
       }
-      else {
+      else {// stops the motor if the number of full spins is reached
         robot.spinnerMotor.stopMotor();
-        colorSpin = false;
-        spinNumber = 0;
+        colorSpin = false;// stops the command
+        spinNumber = 0;//resets the variable for future use
       }
-    } else if (colorSpin && searchColor) {
-      colorSpin = false;
-      searchColor = false;
+    } else if (colorSpin && searchColor) {//if both are enabled, then both will be automatically disabled to stop conflicts
+      colorSpin = false;//disables number specific spin
+      searchColor = false;//disables color specific spin
       
-    } else {
-      robot.spinnerMotor.stopMotor();
-      kPreviousColor = null;
+    } else {// stops motors and sets the previous color to null (for the number counter) so it starts fresh
+      robot.spinnerMotor.stopMotor();//stops motor
+      kPreviousColor = null;//resets previous color variable
     }
 
 
@@ -348,14 +352,53 @@ public class Robot extends TimedRobot {
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
 
-    if (!driveInverted) {
+    if (!driveInverted) {// inverts drive controls if drive inversion button was pressed
       robot.drive.arcadeDrive(robot.joystick.getY() * -1 * 0.7, robot.joystick.getZ()* 0.7);
 
-    }else {
+    }else {// regular drive
       robot.drive.arcadeDrive(robot.joystick.getY() * 0.7, robot.joystick.getZ() * 0.7);
     }
 
     
+
+  }
+
+  
+  @Override
+
+  public void autonomousInit() {
+
+    m_autoSelected = m_autoChooser.getSelected();// sets variable autoselected to a variable pulled from dashboard earlier
+
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+
+    System.out.println("Auto selected: " + m_autoSelected);// prints the variable
+
+  }
+
+  @Override
+
+  public void autonomousPeriodic() {
+
+    //double test = Gyro.getAngle();
+
+    switch (m_autoSelected) {
+
+      case kCustomAuto:
+
+        // Put custom auto code here
+
+        break;
+
+      case kDefaultAuto:
+
+      default:
+
+        robot.drive.arcadeDrive(1, );
+
+        break;
+
+    }
 
   }
   
