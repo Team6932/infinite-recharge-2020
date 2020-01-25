@@ -26,7 +26,6 @@ public class Robot extends TimedRobot {
   RobotHardware robot = RobotHardware.getInstance();
   Variables variables = Variables.getInstance();
   ShuffleboardInit shuffleboardInit = ShuffleboardInit.getInstance();
-  Teleop teleopinit = Teleop.getInstance();
 
 
 
@@ -145,10 +144,48 @@ public class Robot extends TimedRobot {
     Color detectedColor = robot.colorSensor.getColor();
     ColorMatchResult match = robot.m_colorMatcher.matchClosestColor(detectedColor);
 
-    getButtonInput();
+    // detects button inputs and inverts a variable (basically makes the button act
+    // like switches instead of buttons)
+    if (robot.controller.getRawButtonPressed(1))
+    variables.searchColor = !variables.searchColor;
+    if (robot.controller.getRawButtonPressed(10))
+    variables.colorSpin = !variables.colorSpin;
+    if (robot.joystick.getRawButtonPressed(2))
+    variables.driveInverted = !variables.driveInverted;
+    if (robot.controller.getRawButtonPressed(3))
+    variables.ballLauncher = !variables.ballLauncher;
+    if (robot.joystick.getRawButtonPressed(7))
+    variables.forward = !variables.forward;
+    if (robot.controller.getRawButtonPressed(9)) 
+    variables.testMotor = !variables.testMotor;
+    if (robot.controller.getRawButtonPressed(5)) {
+      robot.m_imu.reset();
+      //robot.m_imu.configCalTime(1);
+      robot.m_imu.calibrate();
+      //robot.m_imu.reset();
 
-    ballLauncherControl();
+      variables.straightDrive = !variables.straightDrive;
+    }
 
+    // debugging (prints out special variables of my choosing)
+    /*System.out.println("Spin number = " + spinNumber);
+    System.out.println("previous color = " + kPreviousColor);
+    System.out.println("current color = " + match.color);*/
+
+    // controls the ball launcher
+    if (variables.ballLauncher) {// ball launcher control
+
+      // sets the two motors controlling the ball launcher to be inverted to eachother
+      // (so it fires properly)
+      robot.spinner2.set(1);
+      robot.spinner3.set(-1);
+
+    } else {// stops the motors if the option is off (Default)
+
+      robot.spinner2.stopMotor();
+      robot.spinner3.stopMotor();
+
+    }
 
     // controls the color wheel motors and color sensor
     if (variables.searchColor && !variables.colorSpin) {// if the color specific wheel command is being run, and not the spin ammount
@@ -257,7 +294,7 @@ public class Robot extends TimedRobot {
 
   }
 
-  public double angleZ() {
+public double angleZ() {
 
   return robot.m_imu.getGyroAngleZ();
 }
@@ -319,56 +356,7 @@ public void resetGyro() {
     }
 
   }
-
-  public void getButtonInput() {
-    
-    // detects button inputs and inverts a variable (basically makes the button act
-    // like switches instead of buttons)
-    if (robot.controller.getRawButtonPressed(1))
-    variables.searchColor = !variables.searchColor;
-    if (robot.controller.getRawButtonPressed(10))
-    variables.colorSpin = !variables.colorSpin;
-    if (robot.joystick.getRawButtonPressed(2))
-    variables.driveInverted = !variables.driveInverted;
-    if (robot.controller.getRawButtonPressed(3))
-    variables.ballLauncher = !variables.ballLauncher;
-    if (robot.joystick.getRawButtonPressed(7))
-    variables.forward = !variables.forward;
-    if (robot.controller.getRawButtonPressed(9)) 
-    variables.testMotor = !variables.testMotor;
-    if (robot.controller.getRawButtonPressed(5)) {
-      robot.m_imu.reset();
-      //robot.m_imu.configCalTime(1);
-      robot.m_imu.calibrate();
-      //robot.m_imu.reset();
-
-      variables.straightDrive = !variables.straightDrive;
-    }
-
-  }
   
-  public void ballLauncherControl() {
-
-    // controls the ball launcher
-    if (variables.ballLauncher) {// ball launcher control
-
-      // sets the two motors controlling the ball launcher to be inverted to eachother
-      // (so it fires properly)
-      robot.spinner2.set(1);
-      robot.spinner3.set(-1);
-
-    } else {// stops the motors if the option is off (Default)
-
-      robot.spinner2.stopMotor();
-      robot.spinner3.stopMotor();
-
-    }
-
-  }
-
-  public void colorWheelControl() {
-
-  }
 
 }
 
