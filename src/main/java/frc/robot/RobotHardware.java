@@ -8,12 +8,18 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.util.Color;
 
-public class RobotHardware {
-    public static RobotHardware instance = new RobotHardware();
 
+
+public class RobotHardware {
+
+    Variables variables = Variables.getInstance();
+
+
+    public static RobotHardware instance = new RobotHardware();
     
     public final Spark testSpark = new Spark(8);
     public final PWMTalonSRX testTalon = new PWMTalonSRX(9);
@@ -34,8 +40,10 @@ public class RobotHardware {
 
     public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
 
+    public Ultrasonic ultrasonicSensor1 = new Ultrasonic(variables.trig1, variables.echo1);
+    public Ultrasonic ultrasonicSensor2 = new Ultrasonic(variables.trig2, variables.echo2);
     
-  // color sensor setup
+  // color sensor setup 
   public final ColorMatch m_colorMatcher = new ColorMatch();
   
   // setup color options
@@ -57,3 +65,4 @@ public class RobotHardware {
     }
 
 }
+	

@@ -11,6 +11,8 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -42,6 +44,9 @@ public class Robot extends TimedRobot {
     robot.m_colorMatcher.addColorMatch(robot.kGreenTarget);
     robot.m_colorMatcher.addColorMatch(robot.kRedTarget);
     robot.m_colorMatcher.addColorMatch(robot.kYellowTarget);
+
+    robot.ultrasonicSensor1.setAutomaticMode(true);
+    robot.ultrasonicSensor2.setAutomaticMode(true);
   
   }
 
@@ -56,6 +61,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+    System.out.println(robot.ultrasonicSensor1.getRangeInches());
+    System.out.println(robot.ultrasonicSensor2.getRangeInches());
+
+    periodicTesting();
 
     controllerVars();
     
@@ -100,9 +110,23 @@ public class Robot extends TimedRobot {
     }else if (axis < -360) {
       axis = axis + 360;
     }
-    return axis * 0.05;
+    return axis * 0.06;
   }
 
+  public void periodicTesting() {
+
+    System.out.println("X Axis is: " + robot.m_imu.getGyroAngleX());
+    System.out.println("Y Axis is: " + robot.m_imu.getGyroAngleY());
+    System.out.println("Z Axis is: " + robot.m_imu.getGyroAngleZ());
+
+  }
+  public void motorMusic() {
+
+    if (variables.music) {
+
+    }
+
+  }
   public void robotInitDashboard() {
 
     // setup spin import (from shuffleboard)
@@ -249,13 +273,13 @@ public class Robot extends TimedRobot {
     variables.forward = !variables.forward;
     if (robot.controller.getRawButtonPressed(9)) 
     variables.testMotor = !variables.testMotor;
-    if (robot.controller.getRawButtonPressed(5)) {
+    if (robot.controller.getRawButtonPressed(8))
+    variables.music = !variables.music;
+    if (robot.controller.getRawButtonPressed(12)) {
       robot.m_imu.reset();
       //robot.m_imu.configCalTime(1);
       robot.m_imu.calibrate();
       //robot.m_imu.reset();
-
-      variables.straightDrive = !variables.straightDrive;
     }
 
   }

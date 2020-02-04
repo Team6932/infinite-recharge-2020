@@ -1,9 +1,5 @@
 package frc.robot;
 
-import com.revrobotics.ColorMatch;
-
-import org.ejml.equation.Variable;
-
 import edu.wpi.first.wpilibj.util.Color;
 
 public class Variables {
@@ -21,10 +17,19 @@ public class Variables {
   boolean straightDrive = false;
   boolean gyroResetP = false;
   boolean turn1 = false;
+  boolean music = false;
 
   // intergers
   int spinNumber = 0;
   int autoStep = 0;
+
+  public static final int kLeftMotorPort = 0;
+  public static final int kRightMotorPort = 1;
+  public static final int trig1 = 0;
+  public static final int echo1 = 1;
+
+  public static final int echo2 = 2;
+  public static final int trig2 = 3;
   
   //doubles
   double testMotorSpeed = 0;
