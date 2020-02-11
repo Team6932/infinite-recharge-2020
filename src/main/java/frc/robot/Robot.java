@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
 
     System.out.println(robot.ultrasonicSensor1.getRangeInches());
     System.out.println(robot.ultrasonicSensor2.getRangeInches());
+    System.out.println("ball launcher = " + variables.ballLauncher);
 
     periodicTesting();
 
@@ -74,6 +75,8 @@ public class Robot extends TimedRobot {
     colorWheelControl();
 
     driveControl();
+
+    motorMusic();
 
   }
 
@@ -123,7 +126,168 @@ public class Robot extends TimedRobot {
   public void motorMusic() {
 
     if (variables.music) {
-
+      robot.rightMotor.set(variables.musicSpeed);
+      variables.musicTime++;
+      switch (variables.musicTime) {
+        case 0: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 20: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 40: {
+          variables.musicSpeed =  0.4;
+          break;
+        }
+        case 60: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 80: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 100: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 120: {
+          variables.musicSpeed =  0.4;
+          break;
+        }
+        case 140: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 160: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 180: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 200: {
+          variables.musicSpeed =  0.4;
+          break;
+        }
+        case 220: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 240: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 260: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 280: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 300: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 320: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 340: {
+          variables.musicSpeed = 0.2;
+          break;
+        }
+        case 400: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 410: {
+          variables.musicSpeed = 0;
+          break;
+        }
+        case 420: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 430: {
+          variables.musicSpeed = 0;
+          break;
+        }
+        case 440: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 450: {
+          variables.musicSpeed = 0;
+          break;
+        }
+        case 460: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 470: {
+          variables.musicSpeed = 0;
+          break;
+        }
+        case 480: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 490: {
+          variables.musicSpeed = 0.0;
+          break;
+        }
+        case 500: {
+          variables.musicSpeed = 0.4;
+          break;
+        }
+        case 510: {
+          variables.musicSpeed = 0;
+          break;
+        }
+        case 520: {
+          variables.musicSpeed = 0.5;
+          break;
+        }
+        case 530: {
+          variables.musicSpeed = 0.4;
+          break;
+        }
+        case 540: {
+          variables.musicSpeed = 0.5;
+          break;
+        }
+        case 550: {
+          variables.musicSpeed = 0.6;
+          break;
+        }
+        case 560: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 570: {
+          variables.musicSpeed = 0;
+          break;
+        }
+        case 580: {
+          variables.musicSpeed = 0.8;
+          break;
+        }
+        case 590: {
+          variables.musicSpeed = 0;
+          robot.rightMotor.stopMotor();
+          variables.music = false;
+          variables.musicTime = -1;
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     }
 
   }
@@ -290,8 +454,8 @@ public class Robot extends TimedRobot {
 
       // sets the two motors controlling the ball launcher to be inverted to eachother
       // (so it fires properly)
-      robot.spinner2.set(1);
-      robot.spinner3.set(-1);
+      robot.spinner2.set(.25);
+      robot.spinner3.set(-.25);
 
     } else {// stops the motors if the option is off (Default)
 
@@ -393,10 +557,10 @@ variables.kPreviousColor = null;// resets previous color variable
     // Drive with arcade drive.
     // That means that the Y axis drives forward.
     // and backward, and the X turns left and right.
-    if (!variables.driveInverted) {// inverts drive controls if drive inversion button was pressed
+    if (!variables.driveInverted && !variables.music) {// inverts drive controls if drive inversion button was pressed
       robot.drive.arcadeDrive(robot.joystick.getY() * -1 * 0.7, robot.joystick.getZ() * 0.7);
 
-    } else if (variables.driveInverted) {// regular drive
+    } else if (variables.driveInverted && !variables.music) {// regular drive
       robot.drive.arcadeDrive(robot.joystick.getY() * 0.7, robot.joystick.getZ() * 0.7);
     }
 
