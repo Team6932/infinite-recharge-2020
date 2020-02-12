@@ -12,7 +12,6 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -29,6 +28,7 @@ public class Robot extends TimedRobot {
   Variables variables = Variables.getInstance();
   ShuffleboardInit shuffleboardInit = ShuffleboardInit.getInstance();
 
+  double ballLauncherSpeed = (robot.ultrasonicSensor1.getRangeInches()/12) * 0.1;
 
 
   @Override
@@ -61,10 +61,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    System.out.println(robot.ultrasonicSensor1.getRangeInches());
-    System.out.println(robot.ultrasonicSensor2.getRangeInches());
-    System.out.println("ball launcher = " + variables.ballLauncher);
 
     periodicTesting();
 
@@ -118,10 +114,16 @@ public class Robot extends TimedRobot {
 
   public void periodicTesting() {
 
+    if (!variables.despam) {
     System.out.println("X Axis is: " + robot.m_imu.getGyroAngleX());
     System.out.println("Y Axis is: " + robot.m_imu.getGyroAngleY());
     System.out.println("Z Axis is: " + robot.m_imu.getGyroAngleZ());
 
+    System.out.println("ultrasonic 1 distance = " + robot.ultrasonicSensor1.getRangeInches());
+    System.out.println("ultrasonic 2 distance = " + robot.ultrasonicSensor2.getRangeInches());
+
+    System.out.println("ball launcher = " + variables.ballLauncher);
+    }
   }
   public void motorMusic() {
 
@@ -383,36 +385,59 @@ public class Robot extends TimedRobot {
       default:
 
       switch(variables.autoStep) {// DEFAULT: step based system, if a step is "completed" then it moves on to the next one.
-        case 0: {// During step 0 the robot goes straight for 5 seconds
-          if (System.currentTimeMillis() <= variables.time + 5000){// compares current time to starting time + 5 seconds
-            System.out.println("Turn angle = " + gyroAxis());// prints gyro angle for testing purpouses
-            robot.drive.arcadeDrive(0.5, -gyroAxis());// moves forward, correcting itself 
-          }else {// Once complete increases to the next step
-            variables.autoStep++;
-          }
-          break;
-        }
-        case 1: {// During step 1 the robot turns around 50 degrees
+        case 0: {
           resetGyro();//sets curent angle to 0 degrees
-          if(angleZ() <= 50) {// while the robot is less than 50 degrees
+          if(angleZ() <= 90) {// while the robot is less than 50 degrees
             robot.drive.arcadeDrive(0, 0.5); // Turn    
           } else {
             variables.autoStep++;// increases the step once this step is completed
           }
           break;
+        }
+        case 1: {// During step 1 the robot turns around 50 degrees
+          if (robot.ultrasonicSensor3.getRangeInches() > 12) {
+            robot.drive.arcadeDrive(0.5, 0);
+          }
+          else {
+            variables.autoStep++;
+          }
+          break;
         }        
-        case 2: {// During step 2 the robot turns back 50 degrees, leaving it where it started
-            if (angleZ() > 0) {// while the degree is greater than 0
-              robot.drive.arcadeDrive(0, -0.5);// turns the robot back
-            }
-            else {
-              variables.autoStep++; // increases the step
-            }
+        case 2: {
+          resetGyro();
+          if (angleZ()<=90) {
+            robot.drive.arcadeDrive(0, .5);
+          } else {
+            variables.autoStep++;
+          }
             break;
         }
+        case 3: {
+          if (robot.ultrasonicSensor3.getRangeInches() < 20*12) {
+            robot.drive.arcadeDrive(.6, 0);
+          } else {
+            variables.autoStep++;
+          }
+          break;
+        }
+        case 4: {
+          resetGyro();
+          if (angleZ()<=.0100068884) {
+            robot.drive.arcadeDrive(0, .01);
+            } else {
+              variables.autoStep++;
+            }
+            break;
+          }
+          case 5: {
+            break;
+          }
+        }
+      
       }
         break;
     }
+
   }
   public void resetGyro() {
   if (!variables.gyroResetP) {
@@ -433,6 +458,8 @@ public class Robot extends TimedRobot {
     variables.driveInverted = !variables.driveInverted;
     if (robot.controller.getRawButtonPressed(3))
     variables.ballLauncher = !variables.ballLauncher;
+    if (robot.controller.getRawButtonPressed(4))
+    variables.despam = !variables.despam;
     if (robot.joystick.getRawButtonPressed(7))
     variables.forward = !variables.forward;
     if (robot.controller.getRawButtonPressed(9)) 
@@ -448,14 +475,14 @@ public class Robot extends TimedRobot {
 
   }
   public void ballLauncherControl() {
-    
+
     // controls the ball launcher
     if (variables.ballLauncher) {// ball launcher control
 
       // sets the two motors controlling the ball launcher to be inverted to eachother
       // (so it fires properly)
-      robot.spinner2.set(.25);
-      robot.spinner3.set(-.25);
+      robot.spinner2.set(ballLauncherSpeed);
+      robot.spinner3.set(-ballLauncherSpeed);
 
     } else {// stops the motors if the option is off (Default)
 
@@ -565,5 +592,4 @@ variables.kPreviousColor = null;// resets previous color variable
     }
 
   }
-
 }

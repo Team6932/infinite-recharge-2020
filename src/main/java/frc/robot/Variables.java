@@ -18,22 +18,29 @@ public class Variables {
   boolean gyroResetP = false;
   boolean turn1 = false;
   boolean music = false;
+  boolean despam = true;
 
   // intergers
   int spinNumber = 0;
   int autoStep = 0;
+  int musicTime = 0;
 
   public static final int kLeftMotorPort = 0;
   public static final int kRightMotorPort = 1;
+
   public static final int trig1 = 0;
   public static final int echo1 = 1;
 
   public static final int echo2 = 2;
   public static final int trig2 = 3;
+
+  public static final int echo3 = 4;
+  public static final int trig3 = 5;
   
   //doubles
   double testMotorSpeed = 0;
   double time = 0;
+  double musicSpeed = 0;
 
   // strings
   public static final String kDefaultAuto = "Default";

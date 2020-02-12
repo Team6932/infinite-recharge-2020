@@ -28,8 +28,8 @@ public class RobotHardware {
     public final Spark rightMotor = new Spark(1);
   
     public final PWMTalonSRX spinnerMotor = new PWMTalonSRX(2);
-    public final Spark spinner2 = new Spark(3);
-    public final PWMTalonSRX spinner3 = new PWMTalonSRX(4);
+    public final Spark spinner2 = new Spark(4);
+    public final PWMTalonSRX spinner3 = new PWMTalonSRX(3);
   
     public final DifferentialDrive drive = new DifferentialDrive(leftMotor, rightMotor);
     public final Joystick controller = new Joystick(1);
@@ -42,6 +42,7 @@ public class RobotHardware {
 
     public Ultrasonic ultrasonicSensor1 = new Ultrasonic(variables.trig1, variables.echo1);
     public Ultrasonic ultrasonicSensor2 = new Ultrasonic(variables.trig2, variables.echo2);
+    public Ultrasonic ultrasonicSensor3 = new Ultrasonic(variables.trig3, variables.echo3);
     
   // color sensor setup 
   public final ColorMatch m_colorMatcher = new ColorMatch();
