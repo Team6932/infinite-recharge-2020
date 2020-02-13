@@ -66,14 +66,13 @@ public class Robot extends TimedRobot {
 
     controllerVars();
     
-    ballLauncherControl();
+    launchBall(0);
 
     colorWheelControl();
 
     driveControl();
 
     motorMusic();
-
   }
 
   @Override
@@ -384,17 +383,21 @@ public class Robot extends TimedRobot {
       case Variables.kDefaultAuto:
       default:
 
-      switch(variables.autoStep) {// DEFAULT: step based system, if a step is "completed" then it moves on to the next one.
-        case 0: {
+      switch(variables.autoStep) {
+        case 1: {
+          
           resetGyro();//sets curent angle to 0 degrees
-          if(angleZ() <= 90) {// while the robot is less than 50 degrees
+          variables.autoStep++;
+        }
+        case 2: {
+          if(angleZ() < 90) {// while the robot is less than 50 degrees
             robot.drive.arcadeDrive(0, 0.5); // Turn    
           } else {
             variables.autoStep++;// increases the step once this step is completed
           }
           break;
         }
-        case 1: {// During step 1 the robot turns around 50 degrees
+        case 3: {// During step 1 the robot turns around 50 degrees
           if (robot.ultrasonicSensor3.getRangeInches() > 12) {
             robot.drive.arcadeDrive(0.5, 0);
           }
@@ -402,17 +405,20 @@ public class Robot extends TimedRobot {
             variables.autoStep++;
           }
           break;
-        }        
-        case 2: {
+        }      
+        case 4: {
           resetGyro();
-          if (angleZ()<=90) {
+          variables.autoStep++;
+        }  
+        case 5: {
+          if (angleZ()<90) {
             robot.drive.arcadeDrive(0, .5);
           } else {
             variables.autoStep++;
           }
             break;
         }
-        case 3: {
+        case 6: {
           if (robot.ultrasonicSensor3.getRangeInches() < 20*12) {
             robot.drive.arcadeDrive(.6, 0);
           } else {
@@ -420,25 +426,39 @@ public class Robot extends TimedRobot {
           }
           break;
         }
-        case 4: {
+        case 7: {
           resetGyro();
-          if (angleZ()<=.0100068884) {
+          variables.autoStep++;
+        }
+        case 8: {
+          if (angleZ()>.0100068884) {
             robot.drive.arcadeDrive(0, .01);
             } else {
               variables.autoStep++;
             }
             break;
           }
-          case 5: {
+          case 9: {
+            launchBall(3);
+            variables.autoStep++;
+            break;
+          }
+          case 10: {
+            resetGyro();
+            variables.autoStep++;
+          }
+          case 11: {
+            if (angleZ()<-.0100068884) {
+              robot.drive.arcadeDrive(0, -.01);
+            }else {
+              variables.autoStep++;
+            }
             break;
           }
         }
       
       }
-        break;
     }
-
-  }
   public void resetGyro() {
   if (!variables.gyroResetP) {
     robot.m_imu.reset();
@@ -471,24 +491,6 @@ public class Robot extends TimedRobot {
       //robot.m_imu.configCalTime(1);
       robot.m_imu.calibrate();
       //robot.m_imu.reset();
-    }
-
-  }
-  public void ballLauncherControl() {
-
-    // controls the ball launcher
-    if (variables.ballLauncher) {// ball launcher control
-
-      // sets the two motors controlling the ball launcher to be inverted to eachother
-      // (so it fires properly)
-      robot.spinner2.set(ballLauncherSpeed);
-      robot.spinner3.set(-ballLauncherSpeed);
-
-    } else {// stops the motors if the option is off (Default)
-
-      robot.spinner2.stopMotor();
-      robot.spinner3.stopMotor();
-
     }
 
   }
@@ -592,4 +594,75 @@ variables.kPreviousColor = null;// resets previous color variable
     }
 
   }
+  public void launchBall(int ballNumber) {
+
+    variables.ballTime = System.currentTimeMillis();
+    variables.ballLauncher = true;
+
+    // controls the ball launcher
+    if (variables.ballLauncher && ballNumber == 0) {// ball launcher control
+
+      // sets the two motors controlling the ball launcher to be inverted to eachother
+      // (so it fires properly)
+      robot.spinner2.set(ballLauncherSpeed);
+      robot.spinner3.set(-ballLauncherSpeed);
+
+    } else if (ballNumber > 0 && !variables.ballLauncher) {
+      int i = 0;
+      if (i < ballNumber) {
+        if (variables.ballTime + (400*i) + 300 == System.currentTimeMillis()) {
+          ballInsert();
+          i++;
+        }
+      }
+    }
+    else {// stops the motors if the option is off (Default)
+
+      robot.spinner2.stopMotor();
+      robot.spinner3.stopMotor();
+
+    }
+  }
+  public void ballInsert() {
+
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+      var i = 0;
+
+      robot.spinner2.set(ballLauncherSpeed);
+      robot.spinner3.set(-ballLauncherSpeed);
+
+      if (i < ballNumber) {
+
+        if (System.currentTimeMillis() +(400 * i) + 300 == variables.ballTime) {
+          loadBall();
+        }
+        i++;
+      }
+
+      
+  public void loadBall() {
+
+  }
+  */

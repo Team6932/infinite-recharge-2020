@@ -24,6 +24,7 @@ public class Variables {
   int spinNumber = 0;
   int autoStep = 0;
   int musicTime = 0;
+  int ballNumber = 0;
 
   public static final int kLeftMotorPort = 0;
   public static final int kRightMotorPort = 1;
@@ -40,6 +41,7 @@ public class Variables {
   //doubles
   double testMotorSpeed = 0;
   double time = 0;
+  double ballTime = 0;
   double musicSpeed = 0;
 
   // strings
