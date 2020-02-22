@@ -19,6 +19,7 @@ public class Variables {
   boolean turn1 = false;
   boolean music = false;
   boolean despam = true;
+  boolean load = false;
 
   // intergers
   int spinNumber = 0;

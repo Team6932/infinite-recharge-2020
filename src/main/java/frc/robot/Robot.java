@@ -11,7 +11,6 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -73,6 +72,11 @@ public class Robot extends TimedRobot {
     driveControl();
 
     motorMusic();
+
+    ballCollect();
+
+    //countBalls();
+
   }
 
   @Override
@@ -388,6 +392,8 @@ public class Robot extends TimedRobot {
           
           resetGyro();//sets curent angle to 0 degrees
           variables.autoStep++;
+          break;
+
         }
         case 2: {
           if(angleZ() < 90) {// while the robot is less than 50 degrees
@@ -409,6 +415,7 @@ public class Robot extends TimedRobot {
         case 4: {
           resetGyro();
           variables.autoStep++;
+          break;
         }  
         case 5: {
           if (angleZ()<90) {
@@ -429,6 +436,7 @@ public class Robot extends TimedRobot {
         case 7: {
           resetGyro();
           variables.autoStep++;
+          break;
         }
         case 8: {
           if (angleZ()>.0100068884) {
@@ -446,19 +454,55 @@ public class Robot extends TimedRobot {
           case 10: {
             resetGyro();
             variables.autoStep++;
+            break;
           }
           case 11: {
-            if (angleZ()<-.0100068884) {
+            if (angleZ() < -.0100068884) {
               robot.drive.arcadeDrive(0, -.01);
             }else {
               variables.autoStep++;
             }
             break;
           }
+          case 12: {
+            if (robot.ultrasonicSensor3.getRangeInches() < 12*26) {
+              ballCollect();
+              robot.drive.arcadeDrive(-.5, 0);
+            } else {
+              variables.autoStep++;
+            }
+            break;
+            }
+            case 13: {
+              ballCollect();
+              if (robot.ultrasonicSensor3.getRangeInches() > 12*20) {
+                robot.drive.arcadeDrive(.5, 0);
+              } else {
+                variables.autoStep++;
+              }
+              break;
+            }
+            case 14: {
+              resetGyro();
+              variables.autoStep++;
+            }
+            case 15: {
+              if (angleZ() < .0100068884) {
+                robot.drive.arcadeDrive(0, .1);
+              } else {
+                variables.autoStep++;
+              }
+              break;
+            }
+            case 16: {
+              launchBall(3);
+              variables.autoStep++;
+              break;
+            }
+          }
         }
       
       }
-    }
   public void resetGyro() {
   if (!variables.gyroResetP) {
     robot.m_imu.reset();
@@ -486,12 +530,15 @@ public class Robot extends TimedRobot {
     variables.testMotor = !variables.testMotor;
     if (robot.controller.getRawButtonPressed(8))
     variables.music = !variables.music;
+    if (robot.joystick.getRawButtonPressed(11)) 
+      variables.load = !variables.load;
     if (robot.controller.getRawButtonPressed(12)) {
       robot.m_imu.reset();
       //robot.m_imu.configCalTime(1);
       robot.m_imu.calibrate();
       //robot.m_imu.reset();
     }
+    
 
   }
   public void colorWheelControl() {
@@ -624,45 +671,41 @@ variables.kPreviousColor = null;// resets previous color variable
     }
   }
   public void ballInsert() {
-
+    final double insertTime = System.currentTimeMillis();
+    robot.insertMotor.set(0.2);
+    if (System.currentTimeMillis() == insertTime + 300)
+      robot.insertMotor.stopMotor();
   }
-}
+  public void ballCollect() {
+    if (variables.load) {
+      robot.loaderMotor.set(0.7);
+    } else {
+      robot.loaderMotor.stopMotor();
+    }
+  }/*
 
+  public void countBalls() { //TODO add the if statements to count code.
+    //when a ball is seen entering
+    if (false) {
+    variables.ballNumber++;
+    }
+    //when a ball is seen exiting
+    if (false) {
+    variables.ballNumber--;
+    }
+  }
 
+  public double gyroCorrection(double gyro) {
+    double gyroTime = System.currentTimeMillis();
+    double gyroCorrectionAngle = 0;
+    var i = 0;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-      var i = 0;
-
-      robot.spinner2.set(ballLauncherSpeed);
-      robot.spinner3.set(-ballLauncherSpeed);
-
-      if (i < ballNumber) {
-
-        if (System.currentTimeMillis() +(400 * i) + 300 == variables.ballTime) {
-          loadBall();
-        }
+    if (i < 10) {
+      if (System.currentTimeMillis() == gyroTime + (200*i)) {
         i++;
       }
+    }
 
-      
-  public void loadBall() {
-
-  }
-  */
+    return 0;
+  }*/
+}

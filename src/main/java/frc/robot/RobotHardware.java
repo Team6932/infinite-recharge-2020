@@ -24,12 +24,14 @@ public class RobotHardware {
     public final Spark testSpark = new Spark(8);
     public final PWMTalonSRX testTalon = new PWMTalonSRX(9);
 
-    public final Spark leftMotor = new Spark(0);
-    public final Spark rightMotor = new Spark(1);
+    public final Spark leftMotor = new Spark(5);
+    public final Spark rightMotor = new Spark(0);
   
-    public final PWMTalonSRX spinnerMotor = new PWMTalonSRX(2);
-    public final Spark spinner2 = new Spark(4);
-    public final PWMTalonSRX spinner3 = new PWMTalonSRX(3);
+    public final PWMTalonSRX loaderMotor = new PWMTalonSRX(3);
+    public final PWMTalonSRX insertMotor = new PWMTalonSRX(2);
+    public final PWMTalonSRX spinnerMotor = new PWMTalonSRX(1);
+    public final Spark spinner2 = new Spark(10);
+    public final PWMTalonSRX spinner3 = new PWMTalonSRX(7);
   
     public final DifferentialDrive drive = new DifferentialDrive(leftMotor, rightMotor);
     public final Joystick controller = new Joystick(1);
@@ -55,7 +57,7 @@ public class RobotHardware {
 
   
   // gyro setup
-  public ADIS16448_IMU.IMUAxis m_yawActiveAxis;
+  //public ADIS16448_IMU.IMUAxis m_yawActiveAxis;
   public final ADIS16448_IMU m_imu = new ADIS16448_IMU();
   
   public String m_autoSelected;
