@@ -4,20 +4,19 @@ import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.util.Color;
 
 
 
 public class RobotHardware {
-
-    Variables variables = Variables.getInstance();
-
 
     public static RobotHardware instance = new RobotHardware();
     
@@ -29,11 +28,12 @@ public class RobotHardware {
   
     public final PWMTalonSRX loaderMotor = new PWMTalonSRX(3);
     public final PWMTalonSRX insertMotor = new PWMTalonSRX(2);
-    public final PWMTalonSRX spinnerMotor = new PWMTalonSRX(1);
-    public final Spark spinner2 = new Spark(10);
-    public final PWMTalonSRX spinner3 = new PWMTalonSRX(7);
+    public final PWMTalonSRX spinnerMotor = new PWMTalonSRX(11);
+    public final PWMTalonSRX spinner2 = new PWMTalonSRX(1);
+    public final PWMTalonSRX spinner3 = new PWMTalonSRX(4);
   
     public final DifferentialDrive drive = new DifferentialDrive(leftMotor, rightMotor);
+
     public final Joystick controller = new Joystick(1);
     public final Joystick joystick = new Joystick(2);
 
@@ -42,9 +42,9 @@ public class RobotHardware {
 
     public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
 
-    public Ultrasonic ultrasonicSensor1 = new Ultrasonic(variables.trig1, variables.echo1);
-    public Ultrasonic ultrasonicSensor2 = new Ultrasonic(variables.trig2, variables.echo2);
-    public Ultrasonic ultrasonicSensor3 = new Ultrasonic(variables.trig3, variables.echo3);
+    public Ultrasonic ultrasonicSensor1 = new Ultrasonic(0, 1);
+    public Ultrasonic ultrasonicSensor2 = new Ultrasonic(2, 3);
+    public Ultrasonic ultrasonicSensor3 = new Ultrasonic(4, 5);
     
   // color sensor setup 
   public final ColorMatch m_colorMatcher = new ColorMatch();
@@ -58,12 +58,12 @@ public class RobotHardware {
   
   // gyro setup
   //public ADIS16448_IMU.IMUAxis m_yawActiveAxis;
-  public final ADIS16448_IMU m_imu = new ADIS16448_IMU();
+  //public static final ADIS16448_IMU m_imu = new ADIS16448_IMU();
+  //public Gyro m_imu = new ADXRS450_Gyro();
   
   public String m_autoSelected;
   
     public static RobotHardware getInstance() {
-        System.out.println("Instance Created " + instance);
         return instance;
     }
 

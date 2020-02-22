@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
+import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.revrobotics.ColorMatchResult;
 
 import java.util.Map;
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
 
     robot.ultrasonicSensor1.setAutomaticMode(true);
     robot.ultrasonicSensor2.setAutomaticMode(true);
+    robot.ultrasonicSensor3.setAutomaticMode(true);
   
   }
 
@@ -65,15 +67,24 @@ public class Robot extends TimedRobot {
 
     controllerVars();
     
-    launchBall(0);
+    //launchBall(0);
 
     colorWheelControl();
 
     driveControl();
 
-    motorMusic();
+    //motorMusic();
 
     ballCollect();
+    
+    if (variables.ballLauncher) {
+      
+      robot.spinner2.set(1);
+      robot.spinner3.set(-1);
+    } else {
+      robot.spinner2.stopMotor();
+      robot.spinner3.stopMotor();
+    }
 
     //countBalls();
 
@@ -86,8 +97,8 @@ public class Robot extends TimedRobot {
 
     variables.time = System.currentTimeMillis();// Sets a variable equal to the current time in milliseconds
     
-    robot.m_imu.reset();// Resets gyro
-    robot.m_imu.calibrate();// Calibrates gyro
+    //robot.m_imu.reset();// Resets gyro
+    //robot.m_imu.calibrate();// Calibrates gyro
 
   }
 
@@ -101,11 +112,12 @@ public class Robot extends TimedRobot {
   
   public double angleZ() {
 
-  return robot.m_imu.getGyroAngleZ();
+  //return robot.m_imu.getGyroAngleZ();
+  return 0;
   
 }
   public double gyroAxis() {
-    double axis = robot.m_imu.getAngle();
+    double axis = angleZ();
 
     if (axis > 360) {
       axis= axis - 360;
@@ -118,9 +130,9 @@ public class Robot extends TimedRobot {
   public void periodicTesting() {
 
     if (!variables.despam) {
-    System.out.println("X Axis is: " + robot.m_imu.getGyroAngleX());
-    System.out.println("Y Axis is: " + robot.m_imu.getGyroAngleY());
-    System.out.println("Z Axis is: " + robot.m_imu.getGyroAngleZ());
+    //System.out.println("X Axis is: " + robot.m_imu.getGyroAngleX());
+    //System.out.println("Y Axis is: " + robot.m_imu.getGyroAngleY());
+    //System.out.println("Z Axis is: " + robot.m_imu.getGyroAngleZ());
 
     System.out.println("ultrasonic 1 distance = " + robot.ultrasonicSensor1.getRangeInches());
     System.out.println("ultrasonic 2 distance = " + robot.ultrasonicSensor2.getRangeInches());
@@ -333,7 +345,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodicDashboard() {
 
     // sends different angles to shuffleboard
-    SmartDashboard.putNumber("YawAngle", robot.m_imu.getGyroAngleZ());
+    //SmartDashboard.putNumber("YawAngle", m_imu.getAngle());
 
     // sends misc. inputs to shuffleboard.
     shuffleboardInit.dsInfo.getEntry("spinning").setValue(variables.colorSpin);
@@ -505,8 +517,8 @@ public class Robot extends TimedRobot {
       }
   public void resetGyro() {
   if (!variables.gyroResetP) {
-    robot.m_imu.reset();
-    robot.m_imu.calibrate();
+    //robot.m_imu.reset();
+    //robot.m_imu.calibrate();
     variables.gyroResetP = true;
   }
 }
@@ -532,12 +544,12 @@ public class Robot extends TimedRobot {
     variables.music = !variables.music;
     if (robot.joystick.getRawButtonPressed(11)) 
       variables.load = !variables.load;
-    if (robot.controller.getRawButtonPressed(12)) {
+    /*if (robot.controller.getRawButtonPressed(12)) {
       robot.m_imu.reset();
       //robot.m_imu.configCalTime(1);
       robot.m_imu.calibrate();
       //robot.m_imu.reset();
-    }
+    }*/
     
 
   }
@@ -646,13 +658,16 @@ variables.kPreviousColor = null;// resets previous color variable
     variables.ballTime = System.currentTimeMillis();
     variables.ballLauncher = true;
 
+
     // controls the ball launcher
-    if (variables.ballLauncher && ballNumber == 0) {// ball launcher control
+    if (variables.ballLauncher) {// ball launcher control
 
       // sets the two motors controlling the ball launcher to be inverted to eachother
       // (so it fires properly)
-      robot.spinner2.set(ballLauncherSpeed);
-      robot.spinner3.set(-ballLauncherSpeed);
+      //robot.spinner2.set(ballLauncherSpeed);
+      //robot.spinner3.set(-ballLauncherSpeed);
+      robot.spinner2.set(.7);
+      robot.spinner3.set(-.7);
 
     } else if (ballNumber > 0 && !variables.ballLauncher) {
       int i = 0;
@@ -678,13 +693,13 @@ variables.kPreviousColor = null;// resets previous color variable
   }
   public void ballCollect() {
     if (variables.load) {
-      robot.loaderMotor.set(0.7);
+      robot.loaderMotor.set(1);
     } else {
       robot.loaderMotor.stopMotor();
     }
-  }/*
+  }
 
-  public void countBalls() { //TODO add the if statements to count code.
+  /*public void countBalls() { //TODO add the if statements to count code.
     //when a ball is seen entering
     if (false) {
     variables.ballNumber++;
