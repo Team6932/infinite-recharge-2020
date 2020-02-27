@@ -26,11 +26,11 @@ public class RobotHardware {
     public final Spark leftMotor = new Spark(5);
     public final Spark rightMotor = new Spark(0);
   
-    public final PWMTalonSRX loaderMotor = new PWMTalonSRX(3);
-    public final PWMTalonSRX insertMotor = new PWMTalonSRX(2);
-    public final PWMTalonSRX spinnerMotor = new PWMTalonSRX(11);
-    public final PWMTalonSRX spinner2 = new PWMTalonSRX(1);
-    public final PWMTalonSRX spinner3 = new PWMTalonSRX(4);
+    public final PWMTalonSRX hopperLoader = new PWMTalonSRX(3);
+    public final PWMTalonSRX launcherLoader = new PWMTalonSRX(6);
+    public final PWMTalonSRX wheelMotor = new PWMTalonSRX(11);
+    public final PWMTalonSRX ballLauncher1 = new PWMTalonSRX(1);
+    public final PWMTalonSRX ballLauncher2 = new PWMTalonSRX(4);
   
     public final DifferentialDrive drive = new DifferentialDrive(leftMotor, rightMotor);
 
@@ -42,9 +42,7 @@ public class RobotHardware {
 
     public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
 
-    public Ultrasonic ultrasonicSensor1 = new Ultrasonic(0, 1);
-    public Ultrasonic ultrasonicSensor2 = new Ultrasonic(2, 3);
-    public Ultrasonic ultrasonicSensor3 = new Ultrasonic(4, 5);
+    public Ultrasonic ultrasonicSensor1 = new Ultrasonic(8, 9);
     
   // color sensor setup 
   public final ColorMatch m_colorMatcher = new ColorMatch();
@@ -57,9 +55,8 @@ public class RobotHardware {
 
   
   // gyro setup
-  //public ADIS16448_IMU.IMUAxis m_yawActiveAxis;
-  //public static final ADIS16448_IMU m_imu = new ADIS16448_IMU();
-  //public Gyro m_imu = new ADXRS450_Gyro();
+  //public GyroCompensation gyro = new GyroCompensation();
+  public ADIS16448_IMU gyro = new ADIS16448_IMU(); 
   
   public String m_autoSelected;
   

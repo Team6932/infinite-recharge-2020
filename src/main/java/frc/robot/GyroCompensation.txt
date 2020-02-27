@@ -1,0 +1,45 @@
+package frc.robot;
+
+import com.analog.adis16448.frc.ADIS16448_IMU;
+
+import edu.wpi.first.wpilibj.TimedRobot;
+
+public class GyroCompensation {
+    private RobotHardware robot = RobotHardware.getInstance();
+    private double gyroAddition = 0;
+    private double gyroCompensation = 0;
+    public ADIS16448_IMU uncorrectedGyro = new ADIS16448_IMU();
+    public double cValue = 0; //corrected value
+
+    public void calibrateGyro() throws InterruptedException {
+        int gyroReadings = 200;
+        double values[] = new double[gyroReadings];
+        double prev = 0;
+        double curr = 0;
+        uncorrectedGyro.reset();
+        //uncorrectedGyro.calibrate();
+        Thread.sleep(1000, 0);
+        System.out.println("Beginning gyro calibration!");
+        // Add values to array & sleep 100ms
+        for(int i = 0; i < gyroReadings; i++) {
+            prev = curr;
+            curr = uncorrectedGyro.getGyroAngleZ();
+            values[i] = (curr - prev);
+            Thread.sleep((long) Robot.kDefaultPeriod * 1000, 0);
+        }
+
+        // Average values
+        double sum = 0;
+        for(int i = 0; i < gyroReadings; i++) {
+            sum += values[i];
+        }
+        gyroAddition = sum / gyroReadings;
+
+    }
+
+    // Should be called in robotPeriodic()
+    public void correctGyro() {
+        gyroCompensation += gyroAddition;
+        cValue = uncorrectedGyro.getGyroAngleZ() + gyroCompensation;
+    }
+}

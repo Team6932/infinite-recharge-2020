@@ -1,0 +1,124 @@
+  /*public void autonomousDrive() {
+
+    switch (robot.m_autoSelected) {// checks what option is selected for autonomous
+
+    case Variables.kCustomAuto:
+      break;
+    case Variables.kDefaultAuto:
+    default:
+
+      switch (variables.autoStep) {
+      case 1: {
+
+        resetGyro();// sets curent angle to 0 degrees
+        variables.autoStep++;
+        break;
+
+      }
+      case 2: {
+        if (angleZ() < 90) {// while the robot is less than 50 degrees
+          robot.drive.arcadeDrive(0, 0.5); // Turn
+        } else {
+          variables.autoStep++;// increases the step once this step is completed
+        }
+        break;
+      }
+      case 3: {// During step 1 the robot turns around 50 degrees
+        if (robot.ultrasonicSensor3.getRangeInches() > 12) {
+          robot.drive.arcadeDrive(0.5, 0);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 4: {
+        resetGyro();
+        variables.autoStep++;
+        break;
+      }
+      case 5: {
+        if (angleZ() < 90) {
+          robot.drive.arcadeDrive(0, .5);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 6: {
+        if (robot.ultrasonicSensor3.getRangeInches() < 20 * 12) {
+          robot.drive.arcadeDrive(.6, 0);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 7: {
+        resetGyro();
+        variables.autoStep++;
+        break;
+      }
+      case 8: {
+        if (angleZ() > .0100068884) {
+          robot.drive.arcadeDrive(0, .01);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 9: {
+        launchBall(3);
+        variables.autoStep++;
+        break;
+      }
+      case 10: {
+        resetGyro();
+        variables.autoStep++;
+        break;
+      }
+      case 11: {
+        if (angleZ() < -.0100068884) {
+          robot.drive.arcadeDrive(0, -.01);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 12: {
+        if (robot.ultrasonicSensor3.getRangeInches() < 12 * 26) {
+          ballCollect();
+          robot.drive.arcadeDrive(-.5, 0);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 13: {
+        ballCollect();
+        if (robot.ultrasonicSensor3.getRangeInches() > 12 * 20) {
+          robot.drive.arcadeDrive(.5, 0);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 14: {
+        resetGyro();
+        variables.autoStep++;
+      }
+      case 15: {
+        if (angleZ() < .0100068884) {
+          robot.drive.arcadeDrive(0, .1);
+        } else {
+          variables.autoStep++;
+        }
+        break;
+      }
+      case 16: {
+        launchBall(3);
+        variables.autoStep++;
+        break;
+      }
+      }
+    }
+
+  }*/

@@ -20,12 +20,17 @@ public class Variables {
   boolean music = false;
   boolean despam = true;
   boolean load = false;
+  boolean hopperRotate = false;
+  boolean fullSpeed = false;
+  boolean twothirdsSpeed = false;
+  boolean onethirdSpeed = false;
 
   // intergers
   int spinNumber = 0;
   int autoStep = 0;
   int musicTime = 0;
   int ballNumber = 0;
+  int ballSpeedSetting = 0;
 
   public static final int kLeftMotorPort = 0;
   public static final int kRightMotorPort = 1;
@@ -35,10 +40,14 @@ public class Variables {
   double time = 0;
   double ballTime = 0;
   double musicSpeed = 0;
+  double gyroCorrection = 0;
+  double insertTime = 0;
+  double gyroTime = 0;
+  
 
   // strings
-  public static final String kDefaultAuto = "Default";
-  public static final String kCustomAuto = "My Auto";
+  public final static String kDefaultAuto = "Default";
+  public final static String kCustomAuto = "My Auto";
 
   public String m_yawSelected;
 
