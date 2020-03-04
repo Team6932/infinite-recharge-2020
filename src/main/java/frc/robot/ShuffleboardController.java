@@ -47,6 +47,8 @@ public class ShuffleboardController {
     dsInfo.getEntry("Testing Motor").setValue(variables.testMotor);
     dsInfo.getEntry("drive straight?!?!??!?!?!?!?!?").setValue(variables.straightDrive);
     dsInfo.getEntry("UltraSonic distance in feet").setValue(robot.ultrasonicSensor1.getRangeInches() / 12);
+    dsInfo.getEntry("Ball Launcher Power").setValue(variables.ballSpeed);
+    dsInfo.getEntry("Ball Launcher Enabled").setValue(variables.ballLauncher);
     }
 
     public static ShuffleboardController getInstance() {

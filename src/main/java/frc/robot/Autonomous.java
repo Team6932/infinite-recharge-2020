@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.ejml.equation.VariableScalar;
+
 public class Autonomous {
     private Variables variables = Variables.getInstance();
     private RobotHardware robot = RobotHardware.getInstance();
@@ -17,150 +19,45 @@ public class Autonomous {
     }
 
     public void periodic() {
-        if (robot.m_autoSelected == Variables.kDefaultAuto) {
-            switch (variables.autoStep) {
-            case 1: {
-                robot.gyro.reset(); // sets curent angle to 0 degrees
-                variables.autoStep++;
-                break;
+        //if (robot.m_autoSelected == Variables.kDefaultAuto) {
+            if(System.currentTimeMillis() < variables.autonomousTime + 2000) {
+                robot.drive.arcadeDrive(-.6, 0);
+            } else if(System.currentTimeMillis() < variables.autonomousTime + 5000) {
+                robot.drive.arcadeDrive(0.6, 0.9);
+            } else if (System.currentTimeMillis() < variables.autonomousTime + 6500) {
+                robot.drive.stopMotor();
+                robot.ballLauncher1.set(0.5);
+                robot.ballLauncher2.set(-0.5);
+            } else if (System.currentTimeMillis() < variables.autonomousTime + 7500) {
+                robot.launcherLoader.set(0.3);
+            }else {
+                robot.drive.stopMotor();
+                robot.launcherLoader.stopMotor();
+                robot.ballLauncher1.stopMotor();
+                robot.ballLauncher2.stopMotor();
+                
             }
 
-            case 2: { // Turn 50 degrees
-                if (robot.gyro.getGyroAngleZ() < 90) {
-                    robot.drive.arcadeDrive(0, 0.5);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 3: { // Drive until 12in
-                if (robot.ultrasonicSensor1.getRangeInches() > 12) {
-                    robot.drive.arcadeDrive(0.5, 0);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 4: { // Set gyro to 0
-                robot.gyro.reset();
-                variables.autoStep++;
-                break;
-            }
-
-            case 5: { // Rotate +90
-                if (robot.gyro.getGyroAngleZ() < 90) {
-                    robot.drive.arcadeDrive(0, .5);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 6: { // Drive until closer than 20 ft (in * 12)
-                if (robot.ultrasonicSensor1.getRangeInches() < 20 * 12) {
-                    robot.drive.arcadeDrive(.6, 0);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 7: { // Reset gyro to 0
-                robot.gyro.reset();
-                variables.autoStep++;
-                break;
-            }
-
-            case 8: {
-                if (robot.gyro.getGyroAngleZ() > .0100068884) {
-                    robot.drive.arcadeDrive(0, .01);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 9: {
-                launchBall(3);
-                variables.autoStep++;
-                break;
-            }
-
-            case 10: {
-                robot.gyro.reset();
-                variables.autoStep++;
-                break;
-            }
-
-            case 11: {
-                if (robot.gyro.getGyroAngleZ() < -.0100068884) {
-                    robot.drive.arcadeDrive(0, -.01);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 12: {
-                if (robot.ultrasonicSensor1.getRangeInches() < 12 * 26) {
-                    ballCollect(true);
-                    robot.drive.arcadeDrive(-.5, 0);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 13: {
-                ballCollect(false);
-                if (robot.ultrasonicSensor1.getRangeInches() > 12 * 20) {
-                    robot.drive.arcadeDrive(.5, 0);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 14: {
-                robot.gyro.reset();
-                variables.autoStep++;
-            }
-
-            case 15: {
-                if (robot.gyro.getGyroAngleZ() < .0100068884) {
-                    robot.drive.arcadeDrive(0, .1);
-                } else {
-                    variables.autoStep++;
-                }
-                break;
-            }
-
-            case 16: {
-                launchBall(3);
-                variables.autoStep++;
-                break;
-            }
-            }
-        }
+        //}
+            
     }
 
     public void launchBall(int ballNumber) {
-
+        if (!variables.setLauncherTime) {
         variables.ballTime = System.currentTimeMillis();
-
-         if (ballNumber > 0) {
-            int i = 0;
-            if (i < ballNumber) {
-                if (variables.ballTime + (400 * i) + 300 == System.currentTimeMillis()) {
+        variables.setLauncherTime = true;
+        } else if (ballNumber > 0 && variables.setLauncherTime) {
+            
+            if (variables.i < ballNumber) {
+                if (variables.ballTime + (400 * variables.i) + 300 == System.currentTimeMillis()) {
                     ballInsert();
-                    i++;
+                    variables.i++;
                 }
             }
         } else {
             robot.ballLauncher1.stopMotor();
             robot.ballLauncher2.stopMotor();
+            variables.setLauncherTime = false;
         }
     }
 
@@ -181,32 +78,6 @@ public class Autonomous {
         } else if (!enabled) {
             robot.hopperLoader.stopMotor();
         }
-    }
-
-    public void launchBall() {
-        // controls the ball launcher
-        if (
-            variables.twothirdsSpeed && variables.onethirdSpeed 
-            || variables.twothirdsSpeed && variables.fullSpeed 
-            || variables.onethirdSpeed && variables.fullSpeed
-            ) {
-                variables.fullSpeed = false;
-                variables.onethirdSpeed = false;
-                variables.twothirdsSpeed = false;
-        } else if (variables.fullSpeed) {
-            // sets the two motors controlling the ball launcher to be inverted to eachother
-            // (so it fires properly)
-            // robot.spinner2.set(ballLauncherSpeed);
-            // robot.spinner3.set(-ballLauncherSpeed);
-            robot.ballLauncher1.set(1);
-            robot.ballLauncher2.set(-1);
-        }else if (variables.twothirdsSpeed) {
-            robot.ballLauncher1.set(.6);
-            robot.ballLauncher2.set(-.6);
-        }else if (variables.onethirdSpeed) {
-            robot.ballLauncher1.set(.3);
-            robot.ballLauncher2.set(-.3);
-        } 
     }
 
     public static Autonomous getInstance() {

@@ -20,10 +20,14 @@ public class Variables {
   boolean music = false;
   boolean despam = true;
   boolean load = false;
-  boolean hopperRotate = false;
   boolean fullSpeed = false;
   boolean twothirdsSpeed = false;
   boolean onethirdSpeed = false;
+  boolean wheelSet = false;
+  boolean timed = false;
+  boolean setLauncherTime = false;
+  boolean launcherLoaderF = false;
+  boolean launcherLoaderB = false;
 
   // intergers
   int spinNumber = 0;
@@ -31,6 +35,7 @@ public class Variables {
   int musicTime = 0;
   int ballNumber = 0;
   int ballSpeedSetting = 0;
+  int i = 0;
 
   public static final int kLeftMotorPort = 0;
   public static final int kRightMotorPort = 1;
@@ -43,6 +48,11 @@ public class Variables {
   double gyroCorrection = 0;
   double insertTime = 0;
   double gyroTime = 0;
+  double ballSpeed = 0.5;
+  double wheelTime = 0;
+  double time2 = 0;
+  double hopperSpeed = 0;
+  double autonomousTime = 0;
   
 
   // strings
